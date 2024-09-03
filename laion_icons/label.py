@@ -58,13 +58,15 @@ def main():
         label = label.lower().rstrip(".")
 
         if label == "yes":
-            os.symlink(os.path.abspath(image_path), os.path.join(pos_dir, image_name))
+            out_path = os.path.join(pos_dir, image_name)
         elif label == "no":
-            os.symlink(os.path.abspath(image_path), os.path.join(neg_dir, image_name))
+            out_path = os.path.join(neg_dir, image_name)
         else:
-            os.symlink(
-                os.path.abspath(image_path), os.path.join(unknown_dir, image_name)
-            )
+            out_path = os.path.join(unknown_dir, image_name)
+        os.symlink(
+            os.path.relpath(image_path, start=os.path.dirname(out_path)), out_path
+        )
+
         print(f"labeled {image_name}: {label}")
         time.sleep(SUCCESS_SLEEP)
 
