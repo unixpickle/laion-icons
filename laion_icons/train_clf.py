@@ -66,6 +66,10 @@ def main():
     labels = np.array(labels)
     print(f"total of {len(labels)} examples loaded")
 
+    X_train, X_test, y_train, y_test = train_test_split(
+        features, labels, test_size=0.2, random_state=42
+    )
+
     print("running baseline...")
     dummy = DummyClassifier()
     dummy.fit(X_train, y_train)
@@ -73,10 +77,6 @@ def main():
     print(f"Baseline Accuracy: {accuracy:.4f}")
 
     print("training classifier...")
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        features, labels, test_size=0.2, random_state=42
-    )
 
     classifier = LogisticRegression(max_iter=1000)
     classifier.fit(X_train, y_train)
