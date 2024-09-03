@@ -7,7 +7,9 @@ of positive images without needing to download all images.
 """
 
 import argparse
+from datetime import datetime
 import os
+import pickle
 import numpy as np
 import pyarrow.parquet as pq
 from sklearn.linear_model import LogisticRegression
@@ -39,6 +41,15 @@ def main():
         "--emb_path",
         type=str,
         default=os.path.join(root_data_dir(), "embs", "img_emb_0000.npy"),
+    )
+    parser.add_argument(
+        "--output_path",
+        type=str,
+        default=os.path.join(
+            root_data_dir(),
+            "classifiers",
+            f"clf_{datetime.now().strftime('%Y%m%d-%H%M%S')}.pkl",
+        ),
     )
     args = parser.parse_args()
 
@@ -74,7 +85,7 @@ def main():
     dummy = DummyClassifier()
     dummy.fit(X_train, y_train)
     accuracy = accuracy_score(y_test, dummy.predict(X_test))
-    print(f"Baseline Accuracy: {accuracy:.4f}")
+    print(f" => baseline accuracy: {accuracy:.4f}")
 
     print("training classifier...")
 
@@ -82,7 +93,11 @@ def main():
     classifier.fit(X_train, y_train)
 
     accuracy = accuracy_score(y_test, classifier.predict(X_test))
-    print(f"Test Accuracy: {accuracy:.4f}")
+    print(f" => test accuracy: {accuracy:.4f}")
+
+    os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
+    with open(args.output_path, "wb") as f:
+        pickle.dump(classifier, f)
 
 
 if __name__ == "__main__":
