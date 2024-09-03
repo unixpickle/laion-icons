@@ -1,6 +1,6 @@
 # Goal
 
-Create a dataset of simple images and icons to traing toy text->image models on. This could be a good test dataset for low-compute experiments on text->image, since the problem should be a lot easier than generating natural images.
+Create a dataset of simple images and icons to train toy text->image models on. This could be a good test dataset for low-compute experiments on text->image, since the problem should be a lot easier than generating natural images.
 
 # Usage
 
