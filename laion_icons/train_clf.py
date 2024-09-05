@@ -12,7 +12,7 @@ import os
 import pickle
 import numpy as np
 import pyarrow.parquet as pq
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.dummy import DummyClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -77,23 +77,31 @@ def main():
     labels = np.array(labels)
     print(f"total of {len(labels)} examples loaded")
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        features, labels, test_size=0.2, random_state=42
-    )
+    test_accs = []
+    test_baseline = []
+    train_accs = []
+    train_baseline = []
+    for seed in [0, 1, 2, 3, 4]:
+        X_train, X_test, y_train, y_test = train_test_split(
+            features, labels, test_size=0.2, random_state=seed
+        )
 
-    print("running baseline...")
-    dummy = DummyClassifier()
-    dummy.fit(X_train, y_train)
-    accuracy = accuracy_score(y_test, dummy.predict(X_test))
-    print(f" => baseline accuracy: {accuracy:.4f}")
+        dummy = DummyClassifier()
+        dummy.fit(X_train, y_train)
+        train_baseline.append(accuracy_score(y_train, dummy.predict(X_train)))
+        test_baseline.append(accuracy_score(y_test, dummy.predict(X_test)))
 
-    print("training classifier...")
+        classifier = SVC(probability=True, C=5.0)
+        classifier.fit(X_train, y_train)
 
-    classifier = LogisticRegression(max_iter=1000)
-    classifier.fit(X_train, y_train)
+        train_accs.append(accuracy_score(y_train, classifier.predict(X_train)))
+        test_accs.append(accuracy_score(y_test, classifier.predict(X_test)))
+    
+    print(f'test_acc: {np.mean(test_accs)} (baseline: {np.mean(test_baseline)})')
+    print(f'train_acc: {np.mean(train_accs)} (baseline: {np.mean(train_baseline)})')
 
-    accuracy = accuracy_score(y_test, classifier.predict(X_test))
-    print(f" => test accuracy: {accuracy:.4f}")
+    classifier = SVC(probability=True, C=5.0)
+    classifier.fit(features, labels)
 
     os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
     with open(args.output_path, "wb") as f:
