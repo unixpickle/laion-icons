@@ -91,7 +91,7 @@ def main():
         train_baseline.append(accuracy_score(y_train, dummy.predict(X_train)))
         test_baseline.append(accuracy_score(y_test, dummy.predict(X_test)))
 
-        classifier = SVC(probability=True, C=5.0)
+        classifier = SVC(probability=True, C=1.0)
         classifier.fit(X_train, y_train)
 
         train_accs.append(accuracy_score(y_train, classifier.predict(X_train)))
@@ -100,7 +100,7 @@ def main():
     print(f'test_acc: {np.mean(test_accs)} (baseline: {np.mean(test_baseline)})')
     print(f'train_acc: {np.mean(train_accs)} (baseline: {np.mean(train_baseline)})')
 
-    classifier = SVC(probability=True, C=5.0)
+    classifier = SVC(probability=True, C=1.0)
     classifier.fit(features, labels)
 
     os.makedirs(os.path.dirname(args.output_path), exist_ok=True)

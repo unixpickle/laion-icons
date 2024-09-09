@@ -11,7 +11,7 @@ import base64
 from .util import root_data_dir
 
 ERROR_SLEEP = 20
-SUCCESS_SLEEP = 25
+SUCCESS_SLEEP = 1
 
 
 def main():
