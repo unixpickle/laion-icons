@@ -10,6 +10,7 @@ import os
 import pickle
 import numpy as np
 import pyarrow.parquet as pq
+import traceback
 from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
 from sklearn.model_selection import train_test_split
@@ -62,8 +63,12 @@ def main():
             continue
 
         print(f"working on shard {emb_path} ...")
-        img_emb = np.load(emb_path)
-        df = pq.read_table(meta_path).to_pandas()
+        try:
+            img_emb = np.load(emb_path)
+            df = pq.read_table(meta_path).to_pandas()
+        except:
+            traceback.print_exc()
+            continue
         for i in range(0, len(img_emb), args.batch_size):
             preds = clf.predict_proba(img_emb[i : i + args.batch_size])[:, 1].tolist()
             for j, p in enumerate(preds):
