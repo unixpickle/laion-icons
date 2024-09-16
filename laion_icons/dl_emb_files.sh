@@ -2,7 +2,7 @@ embs_dir="$LAION_ICONS_DIR/embs"
 meta_dir="$LAION_ICONS_DIR/meta"
 mkdir -p "$embs_dir"
 mkdir -p "$meta_dir"
-for shard in {0..9}; do
+for shard in {0..100}; do
     shard=$(printf '%04d' $shard)
     echo "Working on shard $shard ..."
 
