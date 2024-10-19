@@ -71,7 +71,12 @@ def download_image(args, md):
         response = requests.get(info["url"], timeout=5)
         response.raise_for_status()
         img = Image.open(io.BytesIO(response.content))
-        if img.size != expected_size:
+        check_w, check_h = img.size
+        scale = 384 / min(check_w, check_h)
+        if scale < 1:
+            check_w = round(check_w * scale)
+            check_h = round(check_h * scale)
+        if (check_w, check_h) != expected_size:
             raise ValueError(
                 f"size {img.size} mismatches expected size {expected_size}"
             )
